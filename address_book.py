@@ -1,4 +1,3 @@
-
 """
 address_book.py
 Модуль для управління адресною книгою.
@@ -14,6 +13,7 @@ class Record:
     """Тимчасовий клас Record для тестування AddressBook."""
     def __init__(self, name):
         self.name = type("Name", (), {"value": name})()
+        self.phones = []
         self.birthday = None
 
 
@@ -60,12 +60,35 @@ class AddressBook(UserDict):
             return True
         return False
 
+    def search(self, query: str) -> list:
+        """
+        Шукає контакти за частиною імені або номера телефону.
+
+        Args:
+            query: Рядок для пошуку
+
+        Returns:
+            Список знайдених об'єктів Record
+        """
+        q = query.lower()
+        results = []
+        for record in self.data.values():
+            if q in record.name.value.lower():
+                results.append(record)
+                continue
+            if hasattr(record, "phones"):
+                if any(q in p.value for p in record.phones):
+                    results.append(record)
+        return results
+
     def get_upcoming_birthdays(self, days: int = 7) -> list:
         """
         Повертає список контактів, у яких день народження
         протягом наступних N днів від сьогодні.
         Якщо день народження випадає на вихідний —
         привітання переноситься на понеділок.
+        Якщо контакт народився 29 лютого —
+        у не високосний рік використовується 1 березня.
 
         Args:
             days: Кількість днів для перевірки (за замовчуванням 7)
@@ -85,17 +108,30 @@ class AddressBook(UserDict):
             birthday = record.birthday.value
 
             # Замінюємо рік на поточний
-            birthday_this_year = birthday.replace(year=today.year)
+            # Обробка 29 лютого у не високосний рік
+            try:
+                birthday_this_year = birthday.replace(year=today.year)
+            except ValueError:
+                birthday_this_year = birthday.replace(
+                    year=today.year, month=3, day=1
+                )
 
             # Якщо день народження вже минув цього року — беремо наступний рік
             if birthday_this_year < today:
-                birthday_this_year = birthday_this_year.replace(year=today.year + 1)
+                try:
+                    birthday_this_year = birthday_this_year.replace(
+                        year=today.year + 1
+                    )
+                except ValueError:
+                    birthday_this_year = birthday_this_year.replace(
+                        year=today.year + 1, month=3, day=1
+                    )
 
             # Перевіряємо чи потрапляє у діапазон
             if today <= birthday_this_year <= deadline:
 
                 # Переносимо з вихідних на понеділок
-                if birthday_this_year.weekday() == 5:  # Субота
+                if birthday_this_year.weekday() == 5:   # Субота
                     birthday_this_year += timedelta(days=2)
                 elif birthday_this_year.weekday() == 6:  # Неділя
                     birthday_this_year += timedelta(days=1)
