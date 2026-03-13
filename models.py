@@ -70,7 +70,7 @@ class Record:
         self.phones = []
         self.emails = []
         self.addresses = []
-        self.birthday = None
+        self.birthday: Birthday | None = None
 
     def add_phone(self, phone_number):
         self.phones.append(Phone(phone_number))

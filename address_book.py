@@ -5,16 +5,10 @@ address_book.py
 """
 
 from collections import UserDict
-from datetime import datetime, timedelta
+from datetime import date, timedelta
+from models import Record 
 
 
-# Тимчасовий клас Record для тестування (поки Людина 2 не написала свій)
-class Record:
-    """Тимчасовий клас Record для тестування AddressBook."""
-    def __init__(self, name):
-        self.name = type("Name", (), {"value": name})()
-        self.phones = []
-        self.birthday = None
 
 
 class AddressBook(UserDict):
@@ -96,7 +90,7 @@ class AddressBook(UserDict):
         Returns:
             Список словників з ключами 'name' та 'congratulation_date'
         """
-        today = datetime.today()
+        today = date.today()
         deadline = today + timedelta(days=days)
         upcoming = []
 

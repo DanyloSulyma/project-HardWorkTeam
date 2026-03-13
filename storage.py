@@ -7,10 +7,12 @@ storage.py
 
 import pickle
 from pathlib import Path
+from typing import Callable, TypeVar
 
 
 # Домашня директорія користувача (~/)
 HOME_DIR = Path.home()
+T = TypeVar("T")
 
 
 def save_to_file(data: object, filename: str) -> None:
@@ -27,7 +29,7 @@ def save_to_file(data: object, filename: str) -> None:
     print(f"Data saved to '{file_path}'.")
 
 
-def load_from_file(filename: str, default_factory) -> object:
+def load_from_file(filename: str, default_factory: Callable[[], T]) -> T:
     """
     Завантажує об'єкт з бінарного файлу у домашній директорії.
     Якщо файл не знайдено — повертає новий порожній об'єкт.
