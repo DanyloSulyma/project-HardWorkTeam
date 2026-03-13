@@ -3,6 +3,7 @@ Notes Module
 Classes Note and NoteBook for creating, editing, searching, and saving notes.
 """
 
+import pickle
 from datetime import datetime
 from collections import UserList
 # from storage import save_to_file, load_from_file # Uncomment when storage module is implemented
@@ -118,12 +119,34 @@ class NoteBook(UserList):
         )
 
     # ── Save / Load ───────────────────────────────────────
+    # TODO: Replace pickle implementation with storage.py helpers once available:
+    #   from storage import save_to_file, load_from_file
+    #   save  → save_to_file(self.data, filename or self.FILENAME)
+    #   load  → self.data = load_from_file(filename or self.FILENAME, list)
 
     def save(self, filename: str | None = None):
-        """Save notes to a file via the storage module."""
-        # save_to_file(self.data, filename or self.FILENAME) # Uncomment when storage module is implemented
+        """Save notes to a binary file using pickle."""
+        path = filename or self.FILENAME
+        tmp_path = path + ".tmp"
+        try:
+            with open(tmp_path, "wb") as f:
+                pickle.dump(self.data, f)
+            import os
+            os.replace(tmp_path, path)  # atomic rename
+        except (OSError, pickle.PicklingError) as e:
+            raise IOError(f"Failed to save notes to '{path}': {e}")
 
     def load(self, filename: str | None = None):
-        """Load notes from a file via the storage module."""
-        # self.data = load_from_file(filename or self.FILENAME, list) # Uncomment when storage module is implemented
+        """Load notes from a binary file using pickle."""
+        path = filename or self.FILENAME
+        try:
+            with open(path, "rb") as f:
+                data = pickle.load(f)
+            if not isinstance(data, list):
+                raise ValueError("Corrupted file: expected a list of notes.")
+            self.data = data
+        except FileNotFoundError:
+            self.data = []
+        except (pickle.UnpicklingError, ValueError, EOFError) as e:
+            raise IOError(f"Failed to load notes from '{path}': {e}")
 
