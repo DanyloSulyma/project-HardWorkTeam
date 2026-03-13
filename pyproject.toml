@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hardworkteam-assistant"
+version = "0.1.0"
+description = "Personal assistant CLI for contacts and notes management"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "colorama>=0.4.6",
+]
+
+[project.scripts]
+hardworkteam = "main:main"
+
+[tool.setuptools]
+py-modules = [
+    "address_book",
+    "commands",
+    "config",
+    "cli_parser",
+    "main",
+    "models",
+    "notes",
+    "storage",
+]

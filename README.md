@@ -18,11 +18,43 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+## Install As Package
+
+To install the assistant as a CLI command in the active Python environment:
+
+```bash
+pip install .
+```
+
+For development mode:
+
+```bash
+pip install -e .
+```
+
+After installation, run the assistant from any directory with:
+
+```bash
+hardworkteam
+```
+
 ## Run
 
 ```bash
 python main.py
 ```
+
+Or, if installed as a package:
+
+```bash
+hardworkteam
+```
+
+## CLI Architecture
+
+- `main.py` - app startup, save/load, and interactive loop
+- `cli_parser.py` - input parsing, intent matching, and phrase-based reactions
+- `commands.py` - command handlers and command dispatch layer
 
 ## Data Storage
 
