@@ -1,80 +1,49 @@
 # project-HardWorkTeam
-Personal Assistant CLI 
-Персональний помічник з інтерфейсом командного рядка для керування контактами та нотатками.
-Встановлення
-Вимоги
 
-Python 3.10+
-Не потребує сторонніх бібліотек
+Personal Assistant CLI
 
-Крок 1 — Клонування репозиторію
-git clone https://github.com/your-repo/personal-assistant.git
-cd personal-assistant
-Крок 2 — Запуск напряму
-python main.py
-Крок 3 — Або встановити як пакет
-pip install .
-assistant
+## Notes Module
 
-Команди для контактів
-add-contact [ім'я] [телефон] — Додати новий контакт
-add-phone [ім'я] [телефон] — Додати телефон до контакту
-change-phone [ім'я] [старий] [новий] — Змінити номер телефону
-add-email [ім'я] [email] — Додати email до контакту
-add-address [ім'я] [адреса] — Додати адресу до контакту
-add-birthday [ім'я] [ДД.ММ.РРРР] — Додати день народження
-show-birthday [ім'я] — Показати день народження
-show-phone [ім'я] — Показати телефони контакту
-show-contact [ім'я] — Показати повну інформацію
-delete-contact [ім'я] — Видалити контакт
-search-contacts [запит] — Пошук контактів
-all-contacts — Показати всі контакти
-birthdays [днів] — Найближчі дні народження
-Команди для нотаток
-add-note [заголовок] [текст] — Додати нову нотатку
-show-note [id] — Показати нотатку за ID
-edit-note [id] [title/content] [значення] — Редагувати нотатку
-delete-note [id] — Видалити нотатку
-search-notes [запит] — Пошук нотаток за текстом
-all-notes — Показати всі нотатки
-add-tag [id] [тег] — Додати тег до нотатки
-remove-tag [id] [тег] — Видалити тег з нотатки
-search-tag [тег] — Пошук нотаток за тегом
-notes-by-tag — Показати нотатки відсортовані за тегом
+The `notes.py` module provides two classes — `Note` and `NoteBook` — for creating, editing, searching, and organising text notes.
 
-Загальні команди
-hello — Привітання
-help — Показати всі команди
-close / exit — Зберегти та вийти
+### Note
 
-Приклади використання
-add-contact John 1234567890
-add-email John john@example.com
-add-birthday John 15.03.1990
-birthdays 30
-add-note Зустріч Обговорити проєкт
-add-tag 1 робота
-search-tag робота
+| Method | Description |
+|--------|-------------|
+| `Note(title, text, tags=None)` | Create a note with a title, text, and optional list of tags |
+| `edit_title(new_title)` | Change the note's title |
+| `edit_text(new_text)` | Change the note's text |
+| `add_tag(tag)` | Add a tag (returns `False` if it already exists) |
+| `remove_tag(tag)` | Remove a tag (returns `False` if not found) |
 
-Збереження даних
-Контакти зберігаються у файл contacts.pkl
-Нотатки зберігаються у файл notes.pkl
-Дані автоматично зберігаються при введенні exit або close
-При наступному запуску всі дані автоматично завантажуються
+- Title and text cannot be empty.
+- Tags are stored in lowercase and stripped of whitespace.
+- Each note records a `created_at` timestamp automatically.
 
-Структура проєкту
-main.py — Головний файл, CLI інтерфейс
-address_book.py — Клас AddressBook, управління контактами
-storage.py — Серіалізація даних через pickle
-records.py — Класи Record, Field, Phone, Email тощо
-notes.py — Класи Note та NoteBook
-setup.py — Встановлення як пакету
-README.md — Документація
-contacts.pkl — Автоматично створюється при запуску
-notes.pkl — Автоматично створюється при запуску
+### NoteBook
 
-Автори
-Danylo  — Тімлід: CLI інтерфейс, інтеграція 
-Dmytro — Контакти: Класи Record, Field, Phone, Email, Birthday
-Masha — База даних: AddressBook, storage.py, README
-Anton — Нотатки: Note, NoteBook, теги
+`NoteBook` extends `UserList` and manages a collection of `Note` objects.
+
+| Method | Description |
+|--------|-------------|
+| `add_note(title, text, tags=None)` | Create and store a note (title must be unique) |
+| `find_by_title(title)` | Find a note by title (case-insensitive) |
+| `delete_note(title)` | Delete a note by title |
+| `search_by_text(query)` | Search notes whose title or text contains the query |
+| `search_by_tag(tag)` | Search notes by tag |
+| `sort_by_tags()` | Return notes sorted by first tag (untagged last) |
+| `save(filename=None)` | Save notes to file (uses `config.NOTES_FILE` by default) |
+| `load(filename=None)` | Load notes from file |
+
+### Quick Example
+
+```python
+from notes import NoteBook
+
+book = NoteBook()
+book.add_note("Shopping", "Buy milk and eggs", ["grocery", "home"])
+book.add_note("Meeting", "Team sync at 10 AM", ["work"])
+
+print(book.search_by_tag("work"))   # [Note(title='Meeting', tags=['work'])]
+print(book.sort_by_tags())          # sorted by first tag alphabetically
+```
