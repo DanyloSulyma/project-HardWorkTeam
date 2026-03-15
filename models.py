@@ -60,7 +60,7 @@ class Birthday(Field):
             raise ValueError('Invalid date format. Use DD.MM.YYYY')
 
     def __str__(self):
-        # Якщо потрібно буде вивести на екран
+        # Форматований вивід дати на екран
         return self.value.strftime('%d.%m.%Y') if self.value else ''
 
 
@@ -82,7 +82,6 @@ class Record:
         else:
             raise ValueError(f'Phone {phone_number} not found.')
 
-
     def edit_phone(self, old_phone, new_phone):
         phone_obj = self.find_phone(old_phone)
         if not phone_obj:
@@ -96,7 +95,6 @@ class Record:
             if p.value == phone_number:
                 return p
         return None
-
 
     def add_email(self, email_address):
         self.emails.append(Email(email_address))
@@ -122,7 +120,6 @@ class Record:
                 return e
         return None
 
-
     def add_address(self, physical_address):
         self.addresses.append(Address(physical_address))
 
@@ -146,7 +143,6 @@ class Record:
             if a.value == physical_address:
                 return a
         return None
-
 
     def __str__(self):
         phones_str = '; '.join(p.value for p in self.phones) if self.phones else 'No phones'

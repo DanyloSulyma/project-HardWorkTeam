@@ -1,17 +1,16 @@
 """
-Notes Module
-Classes Note and NoteBook for creating, editing, searching, and saving notes.
+Модуль нотаток
+Класи Note та NoteBook для створення, редагування, пошуку та збереження нотаток.
 """
 
 from storage import save_to_file, load_from_file
 from datetime import datetime
 from collections import UserList
-# from storage import save_to_file, load_from_file # Uncomment when storage module is implemented
 from config import NOTES_FILE
 
 
 class Note:
-    """A single note with text, tags, and a timestamp."""
+    """Окрема нотатка з текстом, тегами та міткою часу."""
 
     def __init__(self, title: str, text: str, tags: list[str] | None = None):
         if not title or not title.strip():
@@ -24,19 +23,19 @@ class Note:
         self.created_at = datetime.now()
 
     def edit_text(self, new_text: str):
-        """Edit the note's text."""
+        """Редагувати текст нотатки."""
         if not new_text or not new_text.strip():
             raise ValueError("Note text cannot be empty.")
         self.text = new_text.strip()
 
     def edit_title(self, new_title: str):
-        """Edit the note's title."""
+        """Редагувати заголовок нотатки."""
         if not new_title or not new_title.strip():
             raise ValueError("Note title cannot be empty.")
         self.title = new_title.strip()
 
     def add_tag(self, tag: str) -> bool:
-        """Add a tag to the note. Returns True if added, False if already exists."""
+        """Додати тег до нотатки. Повертає True якщо додано, False якщо вже існує."""
         tag = tag.strip().lower()
         if not tag:
             raise ValueError("Tag cannot be empty.")
@@ -46,7 +45,7 @@ class Note:
         return True
 
     def remove_tag(self, tag: str) -> bool:
-        """Remove a tag from the note. Returns True if removed, False if not found."""
+        """Видалити тег з нотатки. Повертає True якщо видалено, False якщо не знайдено."""
         tag = tag.strip().lower()
         if tag in self.tags:
             self.tags.remove(tag)
@@ -67,14 +66,14 @@ class Note:
 
 
 class NoteBook(UserList):
-    """A collection of notes with search, sort, and persistence capabilities."""
+    """Колекція нотаток з можливостями пошуку, сортування та збереження."""
 
     FILENAME = NOTES_FILE
 
-    # ── CRUD ──────────────────────────────────────────────
+    # ── Операції CRUD ─────────────────────────────────────
 
     def add_note(self, title: str, text: str, tags: list[str] | None = None) -> Note:
-        """Create and add a new note. Raises ValueError if title already exists."""
+        """Створити та додати нову нотатку. Піднімає ValueError якщо заголовок вже існує."""
         if self.find_by_title(title):
             raise ValueError(f"Note with title '{title}' already exists.")
         note = Note(title, text, tags)
@@ -82,7 +81,7 @@ class NoteBook(UserList):
         return note
 
     def find_by_title(self, title: str) -> Note | None:
-        """Find the first note matching the given title (case-insensitive)."""
+        """Знайти першу нотатку за заголовком (без урахування регістру)."""
         title_lower = title.strip().lower()
         for note in self.data:
             if note.title.lower() == title_lower:
@@ -90,35 +89,35 @@ class NoteBook(UserList):
         return None
 
     def delete_note(self, title: str) -> bool:
-        """Delete a note by title. Returns True if deleted."""
+        """Видалити нотатку за заголовком. Повертає True якщо видалено."""
         note = self.find_by_title(title)
         if note:
             self.data.remove(note)
             return True
         return False
 
-    # ── Search ────────────────────────────────────────────
+    # ── Пошук ─────────────────────────────────────────────
 
     def search_by_text(self, query: str) -> list[Note]:
-        """Search notes containing the query in their title or text."""
+        """Пошук нотаток, що містять запит у заголовку або тексті."""
         q = query.strip().lower()
         return [n for n in self.data if q in n.title.lower() or q in n.text.lower()]
 
     def search_by_tag(self, tag: str) -> list[Note]:
-        """Search notes by tag."""
+        """Пошук нотаток за тегом."""
         tag = tag.strip().lower()
         return [n for n in self.data if tag in n.tags]
 
-    # ── Sorting ───────────────────────────────────────────
+    # ── Сортування ────────────────────────────────────────
 
     def sort_by_tags(self) -> list[Note]:
-        """Return notes sorted by their first tag (untagged notes go last)."""
+        """Повертає нотатки, відсортовані за першим тегом (без тегів — в кінці)."""
         return sorted(
             self.data,
             key=lambda n: n.tags[0] if n.tags else "\uffff",
         )
 
-    # ── Save / Load ───────────────────────────────────────
+    # ── Збереження / Завантаження ──────────────────────────
 
     def save(self):
         # Використовуємо ваш універсальний storage

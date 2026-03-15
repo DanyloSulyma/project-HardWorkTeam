@@ -1,10 +1,10 @@
 """
-Configuration file for the assistant bot.
-Centralized place for filenames and other settings.
+Конфігураційний файл бота-помічника.
+Централізоване місце для імен файлів та інших налаштувань.
 """
 
-# File used to persist notes data
+# Файл для збереження даних нотаток
 NOTES_FILE = "notes.bin"
 
-# File used to persist address book data
+# Файл для збереження даних адресної книги
 CONTACTS_FILE = "contacts.bin"

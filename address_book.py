@@ -6,9 +6,7 @@ address_book.py
 
 from collections import UserDict
 from datetime import date, timedelta
-from models import Record 
-
-
+from models import Record
 
 
 class AddressBook(UserDict):
